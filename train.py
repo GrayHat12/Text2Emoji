@@ -7,7 +7,8 @@ Created on Wed Jan 15 13:47:12 2020
 """
 
 import os
-from flair.data_fetcher import NLPTaskDataFetcher
+#from flair.data_fetcher import NLPTaskDataFetcher
+from flair.datasets import ClassificationCorpus
 from flair.embeddings import WordEmbeddings, FlairEmbeddings, DocumentRNNEmbeddings, ELMoEmbeddings
 from flair.models import TextClassifier
 from flair.trainers import ModelTrainer
@@ -31,7 +32,7 @@ def segment_data(data_file):
     
 def create_corpus():
     if os.path.exists('./data/train.csv') and  os.path.exists('./data/test.csv') and  os.path.exists('./data/dev.csv'):
-        corpus = NLPTaskDataFetcher.load_classification_corpus(Path('./data'), test_file='test.csv', dev_file='dev.csv', train_file='train.csv')
+        corpus = ClassificationCorpus(Path('./data'), test_file='test.csv', dev_file='dev.csv', train_file='train.csv') # NLPTaskDataFetcher.load_classification_corpus(Path('./data'), test_file='test.csv', dev_file='dev.csv', train_file='train.csv')
         return corpus
     else: return 0
     
@@ -61,7 +62,7 @@ if __name__ == '__main__':
 
     word_embeddings = initialize_embeddings()
     document_embeddings = DocumentRNNEmbeddings(word_embeddings, hidden_size=512, reproject_words=True, reproject_words_dimension=256, rnn_type='LSTM', rnn_layers=1, bidirectional=False)
-    classifier = TextClassifier(document_embeddings, label_dictionary=corpus.make_label_dictionary(), multi_label=False)
+    classifier = TextClassifier(document_embeddings, label_dictionary=corpus.make_label_dictionary('class'), multi_label=False, label_type='class')
     trainer = ModelTrainer(classifier, corpus)
     trainer.train('./model', max_epochs=20, patience=5, mini_batch_size=32, learning_rate=0.1)
 
