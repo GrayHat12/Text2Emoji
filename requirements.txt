@@ -1,4 +1,6 @@
 flair
 flask==2.1.0
 pandas
-allennlp
+sacremoses
+allennlp==0.9.0
+conllu>=4.0
